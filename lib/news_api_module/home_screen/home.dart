@@ -10,7 +10,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-   late Future<NewsModel> _api = NewsServices.readAPI();
+   late Future<NewModel> _api = NewsServices.readAPI();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
         });
       },
       child: Center(
-        child: FutureBuilder<NewsModel>(
+        child: FutureBuilder<NewModel>(
           future: _api,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-    Widget _buildOuptut(NewsModel? model) {
+    Widget _buildOuptut(NewModel? model) {
     if (model == null) {
       return SizedBox();
     } else {
@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
    Widget _buildListView(List<Article> results) {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
-      itemCount: results.length,
+      itemCount: 20,
       itemBuilder: (context, index) {
         return _buildItem(results[index]);
       },
@@ -65,6 +65,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildItem(Article item) {
+    String? imgUrl = item.urlToImage.toString();
     return InkWell(
       // onTap: () {
       //   Navigator.of(context).push(
@@ -75,9 +76,9 @@ class _HomeState extends State<Home> {
       // },
       child: Card(
         child: ListTile(
-          leading: Image.network(item.urlToImage.toString()),
+          leading:  imgUrl != "null" ? Image.network(imgUrl) : SizedBox(),
           title: Text(item.title.toString()),
-          subtitle: Text(item.description.toString()),
+          subtitle: Text(item.content.toString()),
           // trailing: Text("USD ${item.price}"),
         ),
       ),
