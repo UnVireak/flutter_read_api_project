@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_read_api_project/news_api_module/home_screen/detail_screen.dart';
+import 'package:flutter_read_api_project/news_api_module/screens/detail_screen.dart';
 import 'package:flutter_read_api_project/news_api_module/model/news_model.dart';
 import 'package:flutter_read_api_project/services/news_services.dart';
 
