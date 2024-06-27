@@ -7,9 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/home.dart';
 
 class AboutUsScreen extends StatefulWidget {
-  const AboutUsScreen({super.key, required this.ref});
-
-  final Function(int)? ref;
+  const AboutUsScreen({super.key});
 
   @override
   State<AboutUsScreen> createState() => _AboutUsScreenState();
@@ -413,7 +411,8 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 height: 10,
               ),
               TextButton(
-                onPressed: () => widget.ref!(0),
+                onPressed: () => Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => Home())),
                 child: const Text('Send'),
                 style: TextButton.styleFrom(
                     backgroundColor: Colors.green,
