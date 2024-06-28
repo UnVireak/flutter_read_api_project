@@ -24,6 +24,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("About Us"),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -45,7 +46,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
       width: screenWidth,
       height: screenHeight * 0.3,
       child: Image.network(
-        "https://blog.jostle.me/hubfs/How_to_Promote_Effective_Teamwork.png",
+        "https://us.123rf.com/450wm/peopleimages12/peopleimages122202/peopleimages12220204728/182031577-i-like-this-cropped-shot-of-a-creative-businessperson-working-in-the-office.jpg?ver=6",
         fit: BoxFit.cover, // Ensure the image covers the container
       ),
     );
@@ -172,7 +173,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       alignment: Alignment.centerRight,
                       child: Container(
                         margin: EdgeInsets.only(
-                            top: 30, left: 60), // Adjusted margin for the image container
+                            top: 26, left: 60), // Adjusted margin for the image container
                         width: screenWidth *
                             0.3, // Adjusted width for the image container
                         height: screenHeight *
@@ -251,7 +252,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                   alignment: Alignment.bottomRight,
                   child: Container(
                     margin: EdgeInsets.only(
-                        top: 37, right: 0,), 
+                        top: 35, ), 
                     width: screenWidth *
                         0.28, // Adjusted width for the image container
                     height: screenHeight *
@@ -338,7 +339,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                   alignment: Alignment.bottomRight,
                   child: Container(
                     margin: EdgeInsets.only(
-                        top: 22, right: 0,), 
+                        top: 18, right: 0,), 
                     width: screenWidth *
                         0.21, // Adjusted width for the image container
                     height: screenHeight *
@@ -413,7 +414,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 height: 10,
               ),
               TextButton(
-                onPressed: () => widget.ref!(0),
+                onPressed: (){},
                 child: const Text('Send'),
                 style: TextButton.styleFrom(
                     backgroundColor: Colors.green,

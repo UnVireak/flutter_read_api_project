@@ -18,11 +18,10 @@ class _FrontScreenState extends State<FrontScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
-        showBottomBar = false;
+        showBottomBar = true;
         setState(() {});
       } else {
         showBottomBar = true;
@@ -68,10 +67,10 @@ class _FrontScreenState extends State<FrontScreen> {
       height: showBottomBar ? 58 : 0,
       curve: Curves.easeInSine,
       child: BottomNavigationBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.red,
-        unselectedItemColor: Colors.white,
+        unselectedItemColor: Colors.black,
         selectedLabelStyle: const TextStyle(fontSize: 12),
         unselectedLabelStyle: const TextStyle(fontSize: 12),
         onTap: (index) {

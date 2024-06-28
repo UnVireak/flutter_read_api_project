@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final newModel = newModelFromMap(jsonString);
-
 import 'dart:convert';
 
 NewModel newModelFromMap(String str) => NewModel.fromMap(json.decode(str));
@@ -44,13 +40,13 @@ class Article {
 
     Article({
         required this.source,
-        required this.author,
+        this.author,
         required this.title,
-        required this.description,
+        this.description,
         required this.url,
-        required this.urlToImage,
+        this.urlToImage,
         required this.publishedAt,
-        required this.content,
+        this.content,
     });
 
     factory Article.fromMap(Map<String, dynamic> json) => Article(
@@ -81,7 +77,7 @@ class Source {
     String name;
 
     Source({
-        required this.id,
+        this.id,
         required this.name,
     });
 
@@ -94,8 +90,4 @@ class Source {
         "id": id,
         "name": name,
     };
-      @override
-  String toString() {
-    return toMap().toString();
-  }
 }
