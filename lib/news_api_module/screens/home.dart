@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
                 color: Colors.blue,
               ),
               child: Text(
-                'Drawer Header',
+                'Welcome to New',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,

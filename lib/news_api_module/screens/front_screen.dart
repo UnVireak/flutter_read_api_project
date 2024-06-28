@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/aboutUs_screen.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/home.dart';
+import 'package:flutter_read_api_project/news_api_module/screens/read_api.dart';
 
 class FrontScreen extends StatefulWidget {
-  const FrontScreen({super.key});
+  const FrontScreen({Key? key}) : super(key: key);
 
   @override
   State<FrontScreen> createState() => _FrontScreenState();
 }
 
 class _FrontScreenState extends State<FrontScreen> {
-  final ScrollController _scrollController = ScrollController();
+  late ScrollController _scrollController;
   int _currentIndex = 0;
   bool showBottomBar = true;
 
   @override
   void initState() {
+    _scrollController = ScrollController(); // Initialize the scroll controller
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -29,6 +30,12 @@ class _FrontScreenState extends State<FrontScreen> {
       }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Dispose the scroll controller
+    super.dispose();
   }
 
   @override
@@ -46,24 +53,25 @@ class _FrontScreenState extends State<FrontScreen> {
         Home(
           scrollController: _scrollController,
         ),
-        Container(
-          color: Colors.blue,
+        Readapi(
+          ref: (int index) {
+            _currentIndex = index;
+            setState(() {});
+          },
         ),
         AboutUsScreen(
           ref: (int index) {
             _currentIndex = index;
             setState(() {});
           },
-        )
+        ),
       ],
     );
   }
 
   Widget _buildBottom() {
     return AnimatedContainer(
-      duration: const Duration(
-        milliseconds: 150,
-      ),
+      duration: const Duration(milliseconds: 150),
       height: showBottomBar ? 58 : 0,
       curve: Curves.easeInSine,
       child: BottomNavigationBar(
