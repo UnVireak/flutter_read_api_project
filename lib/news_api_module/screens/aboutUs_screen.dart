@@ -23,7 +23,12 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
     var screenHeight = screenSize.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text("About Us"),
+        title: Text("About Us",
+        style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold
+                ),),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -87,7 +92,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
             height: screenHeight * 0.3,
             child: Center(
               child: Text(
-                'Founded by a college student during COVID shutdown',
+                'Founded by a college students at Norton University, majoring software development.',
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black,
@@ -113,7 +118,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
         child: Text(
           " Have you ever been part of a team that simply just didn't work, as if everyone was speaking different languages and no one was on the same page? Everyone seems to be talking about the same thing, but nothing seems to get done. Teamwork, as simple as it may sound, is not easy to achieve. It refers to a group of people – in this case, employees – working together to complete a task or attain a common goal. ",
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             color: Colors.black,
           ),
         ),
@@ -128,7 +133,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
           padding: EdgeInsets.all(8),
           child: Text("OUR TEAM",
           style: TextStyle( 
-            fontSize: 14,
+            fontSize: 18,
             fontWeight: FontWeight.bold
           ),
           ),

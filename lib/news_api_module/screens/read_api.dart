@@ -79,7 +79,12 @@ class _ReadapiState extends State<Readapi> {
       return
  Scaffold(
       appBar: AppBar(
-        title: const Text("News"),
+        centerTitle: true,
+        title: const Text("News", style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold
+                ),),
         elevation: 10,
         actions: [
           IconButton(
