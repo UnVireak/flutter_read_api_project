@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../model/news_model.dart';
+import 'package:flutter_read_api_project/news_api_module/model/news_model.dart';
 
 class FavoritesProvider extends ChangeNotifier {
-  List<Article> _favorites = [];
+  final List<Article> _favorites = [];
 
   List<Article> get favorites => _favorites;
 

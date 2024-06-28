@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/favoriteprovider.dart';
 import 'package:provider/provider.dart';
-import '../model/news_model.dart';
-import 'detail_screen.dart';
+import 'package:flutter_read_api_project/news_api_module/model/news_model.dart';
+import 'package:flutter_read_api_project/news_api_module/screens/detail_screen.dart';
 //import '../providers/favorites_provider.dart';
 
 class FavoritesScreen extends StatelessWidget {
+  final List<Article> articles;
+  const FavoritesScreen({
+    super.key,
+    required this.articles,
+  });
+
   @override
   Widget build(BuildContext context) {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
@@ -35,7 +41,7 @@ class FavoritesScreen extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => DetailScreen(
               item: article,
-              articles: [article],
+              articles: articles,
             ),
           ),
         );

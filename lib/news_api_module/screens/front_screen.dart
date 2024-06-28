@@ -5,20 +5,19 @@ import 'package:flutter_read_api_project/news_api_module/screens/home.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/read_api.dart';
 
 class FrontScreen extends StatefulWidget {
-  const FrontScreen({Key? key}) : super(key: key);
+  const FrontScreen({super.key});
 
   @override
   State<FrontScreen> createState() => _FrontScreenState();
 }
 
 class _FrontScreenState extends State<FrontScreen> {
-  late ScrollController _scrollController;
+  final ScrollController _scrollController = ScrollController();
   int _currentIndex = 0;
   bool showBottomBar = true;
 
   @override
   void initState() {
-    _scrollController = ScrollController(); // Initialize the scroll controller
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
@@ -30,12 +29,6 @@ class _FrontScreenState extends State<FrontScreen> {
       }
     });
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose(); // Dispose the scroll controller
-    super.dispose();
   }
 
   @override
@@ -53,25 +46,22 @@ class _FrontScreenState extends State<FrontScreen> {
         Home(
           scrollController: _scrollController,
         ),
-        Readapi(
-          ref: (int index) {
-            _currentIndex = index;
-            setState(() {});
-          },
-        ),
+        const Readapi(),
         AboutUsScreen(
           ref: (int index) {
             _currentIndex = index;
             setState(() {});
           },
-        ),
+        )
       ],
     );
   }
 
   Widget _buildBottom() {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
+      duration: const Duration(
+        milliseconds: 150,
+      ),
       height: showBottomBar ? 58 : 0,
       curve: Curves.easeInSine,
       child: BottomNavigationBar(
@@ -88,7 +78,7 @@ class _FrontScreenState extends State<FrontScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Explore"),
           BottomNavigationBarItem(icon: Icon(Icons.contacts), label: "About"),
         ],
       ),

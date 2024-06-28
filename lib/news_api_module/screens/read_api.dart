@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_read_api_project/news_api_module/model/news_model.dart';
-import 'package:flutter_read_api_project/news_api_module/screens/detail_screen.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/favoriteprovider.dart';
 import 'package:flutter_read_api_project/news_api_module/screens/favoritescreen.dart';
 import 'package:flutter_read_api_project/services/news_services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_read_api_project/news_api_module/model/news_model.dart';
+import 'package:flutter_read_api_project/news_api_module/screens/detail_screen.dart';
 
 class Readapi extends StatefulWidget {
-  final Function(int) ref;
-
-  const Readapi({Key? key, required this.ref}) : super(key: key);
+  const Readapi({super.key});
 
   @override
-  _ReadapiState createState() => _ReadapiState();
+  State<Readapi> createState() => _ReadapiState();
 }
 
 class _ReadapiState extends State<Readapi> {
@@ -26,29 +24,29 @@ class _ReadapiState extends State<Readapi> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("News"),
-        elevation: 10,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {
-              // Navigate to Favorites page
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FavoritesScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: _buildBody(),
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {
+          _api = NewsServices.readAPI();
+        });
+      },
+      child: Center(child: FutureBuilder<NewModel>(
+       future: _api,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("Error ${snapshot.error}");
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              return _buildOutput(snapshot.data);
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+ 
+      ),),
     );
   }
-
+  
   Widget _buildBody() {
     return RefreshIndicator(
       onRefresh: () async {
@@ -66,7 +64,7 @@ class _ReadapiState extends State<Readapi> {
             if (snapshot.connectionState == ConnectionState.done) {
               return _buildOutput(snapshot.data);
             } else {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           },
         ),
@@ -76,20 +74,50 @@ class _ReadapiState extends State<Readapi> {
 
   Widget _buildOutput(NewModel? model) {
     if (model == null || model.articles == null || model.articles.isEmpty) {
-      return Center(child: Text("No news available."));
+      return const Center(child: Text("No news available."));
     } else {
-      return _buildListView(model.articles);
+      return
+ Scaffold(
+      appBar: AppBar(
+        title: const Text("News"),
+        elevation: 10,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () {
+              // Navigate to Favorites page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FavoritesScreen(
+                    articles: model.articles,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: _buildListView(model.articles),
+    );
+
     }
   }
 
   Widget _buildListView(List<Article> articles) {
     return ListView.builder(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       itemCount: articles.length,
       itemBuilder: (context, index) {
         return _buildItem(articles, index);
       },
     );
+  }
+
+  String truncateWithEllipsis(int maxLength, String text) {
+    return (text.length <= maxLength)
+        ? text
+        : '${text.substring(0, maxLength)}...';
   }
 
   Widget _buildItem(List<Article> articles, int index) {
@@ -98,25 +126,12 @@ class _ReadapiState extends State<Readapi> {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
     final isFavorite = favoritesProvider.favorites.contains(article);
 
-    return ListTile(
-      leading: imgUrl != null && imgUrl.isNotEmpty
-          ? Image.network(imgUrl)
-          : Container(
-              width: 50,
-              height: 50,
-              color: Colors.grey,
-              child: Icon(Icons.image_not_supported),
-            ),
-      title: Text(
-        article.title ?? "No title available.",
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        article.content ?? "No content available.",
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
+    // Check for null or missing values
+    if (article.title == "null" || article.title.isEmpty) {
+      return const SizedBox.shrink(); // Hide the item if it has no title
+    }
+
+    return InkWell(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -127,8 +142,32 @@ class _ReadapiState extends State<Readapi> {
           ),
         );
       },
-
-      trailing: IconButton(
+      child: Card(
+        child: ListTile(
+          leading: AspectRatio(
+            aspectRatio: 4 / 3,
+            child: imgUrl != null && imgUrl.isNotEmpty
+                ? Image.network(
+                    imgUrl,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    height: 50,
+                    color: Colors.grey,
+                    child: const Icon(Icons.image_not_supported),
+                  ),
+          ),
+          title: Text(
+            article.title.toString(),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(
+            article.content ?? "No content available.",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
             ),
@@ -140,6 +179,8 @@ class _ReadapiState extends State<Readapi> {
               }
             },
           ),
+        ),
+      ),
     );
   }
 }

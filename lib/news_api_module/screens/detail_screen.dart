@@ -1,12 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_read_api_project/news_api_module/model/news_model.dart';
+import 'package:flutter_read_api_project/news_api_module/screens/favoriteprovider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DetailScreen extends StatefulWidget {
   final Article item;
   final List<Article> articles;
-  DetailScreen({required this.item, required this.articles});
+  const DetailScreen({super.key, required this.item, required this.articles});
 
   @override
   _DetailScreenState createState() => _DetailScreenState();
@@ -21,7 +22,10 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
-    List<Article> moreArticles = widget.articles.where((article) => article != widget.item).toList();
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
+    final isFavorite = favoritesProvider.favorites.contains(widget.item);
+    List<Article> moreArticles =
+        widget.articles.where((article) => article != widget.item).toList();
 
     return CustomScrollView(
       slivers: [
@@ -31,49 +35,62 @@ class _DetailScreenState extends State<DetailScreen> {
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               var top = constraints.biggest.height;
-              bool isCollapsed = top <= kToolbarHeight + MediaQuery.of(context).padding.top;
+              bool isCollapsed =
+                  top <= kToolbarHeight + MediaQuery.of(context).padding.top;
               return FlexibleSpaceBar(
                 title: isCollapsed
                     ? Container(
-                      margin: EdgeInsets.only(right: 65),
-                      child: Text(
+                        margin: const EdgeInsets.only(right: 65),
+                        child: Text(
                           widget.item.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                             overflow: TextOverflow.ellipsis,
                           ),
                           maxLines: 1,
                           softWrap: false,
                           overflow: TextOverflow.fade,
                         ),
-                    )
+                      )
                     : null,
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      widget.item.urlToImage.toString(),
-                      fit: BoxFit.cover,
-                    ),
+                    widget.item.urlToImage != null &&
+                            widget.item.urlToImage!.isNotEmpty
+                        ? Image.network(
+                            widget.item.urlToImage.toString(),
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            color: Colors.grey,
+                            child: const Center(
+                              child: Icon(Icons.image_not_supported, size: 100,),
+                            ),
+                          ),
                   ],
                 ),
               );
             },
           ),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios,  color: Colors.black,),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.share, color: Colors.black,),
-              onPressed: () {
-               
-              },
+              icon: const Icon(
+                Icons.share,
+                color: Colors.black,
+              ),
+              onPressed: () {},
             ),
           ],
         ),
@@ -81,37 +98,44 @@ class _DetailScreenState extends State<DetailScreen> {
           delegate: SliverChildListDelegate(
             [
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.calendar_today_outlined,
                           color: Colors.grey,
                           size: 15,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
-                          DateFormat('yyyy-MM-dd').format(DateTime.parse(widget.item.publishedAt.toString())),
-                          style: TextStyle(
+                          DateFormat('yyyy-MM-dd').format(DateTime.parse(
+                              widget.item.publishedAt.toString())),
+                          style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 15,
                           ),
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (isFavorite) {
+                          favoritesProvider.removeFavorite(widget.item);
+                        } else {
+                          favoritesProvider.addFavorite(widget.item);
+                        }
+                      },
                       icon: Icon(
-                        Icons.favorite_outline,
+                        isFavorite ? Icons.favorite : Icons.favorite_outline,
                         color: Colors.grey,
                       ),
                     ),
                     IconButton(
                       onPressed: () {},
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.bookmark_outline,
                         color: Colors.grey,
                       ),
@@ -120,10 +144,10 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   widget.item.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 25,
                     fontWeight: FontWeight.w700,
@@ -132,37 +156,43 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   widget.item.description.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                   ),
                 ),
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.only(left: 8, top: 35),
-                child: Text('Top trending', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,)),
+                child: Text('Top trending',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    )),
               ),
-             
               _buildMoreNews(moreArticles),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 35, horizontal: 8),
-                child: Text('Recommend for you', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                child: Text('Recommend for you',
+                    style:
+                        TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               ),
               _buildMoreNews2(moreArticles),
-              SizedBox(height: 20,)
+              const SizedBox(
+                height: 20,
+              )
             ],
           ),
         ),
-        
       ],
     );
   }
 
   Widget _buildMoreNews(List<Article> articles) {
     return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: 10,
       itemBuilder: (context, index) {
@@ -178,154 +208,153 @@ class _DetailScreenState extends State<DetailScreen> {
           MaterialPageRoute(
             builder: (context) => DetailScreen(
               item: item,
-              articles: widget.articles.where((article) => article != item).toList(),
+              articles:
+                  widget.articles.where((article) => article != item).toList(),
             ),
           ),
         );
       },
       child: Container(
-  margin: EdgeInsets.only(top: 0),
-  child: Container(
-    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8.0),
-      // border: Border.all(color: Colors.grey, width: 1), // Add border if needed
-    ),
-    child: Padding(
-      padding: EdgeInsets.all(0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          item.urlToImage.toString() != "null"
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    item.urlToImage.toString(),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: Icon(Icons.image, size: 50),
-                ),
-          SizedBox(width: 16.0),
-          Expanded(
-            child: Column(
+        margin: const EdgeInsets.only(top: 0),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            // border: Border.all(color: Colors.grey, width: 1), // Add border if needed
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(0),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.title.toString(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  item.content.toString(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
+                item.urlToImage.toString() != "null"
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          item.urlToImage.toString(),
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : const SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Icon(Icons.image, size: 50),
+                      ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text(
+                        item.content.toString(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
-    ),
-  ),
-),
-
     );
   }
 
   Widget _buildMoreNews2(List<Article> articles) {
-  return Container(
-    height: 300.0, // Set a fixed height for the horizontal list
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal, // Make the list scroll horizontally
-      itemCount: articles.length,
-      itemBuilder: (context, index) {
-        return _buildHorizontalItem(articles[index]);
+    return SizedBox(
+      height: 300.0, // Set a fixed height for the horizontal list
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal, // Make the list scroll horizontally
+        itemCount: articles.length,
+        itemBuilder: (context, index) {
+          return _buildHorizontalItem(articles[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildHorizontalItem(Article item) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => DetailScreen(
+              item: item,
+              articles:
+                  widget.articles.where((article) => article != item).toList(),
+            ),
+          ),
+        );
       },
-    ),
-  );
-}
-
-Widget _buildHorizontalItem(Article item) {
-  return InkWell(
-    onTap: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DetailScreen(
-            item: item,
-            articles: widget.articles.where((article) => article != item).toList(),
-          ),
+      child: Container(
+        width: 280.0, // Set a fixed width for each item
+        height: 300,
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          // border: Border.all(color: Colors.grey, width: 1), // Add border if needed
         ),
-      );
-    },
-   child: Container(
-  width: 280.0, // Set a fixed width for each item
-  height: 300,
-  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(8.0),
-    // border: Border.all(color: Colors.grey, width: 1), // Add border if needed
-  ),
-  child: Padding(
-    padding: EdgeInsets.all(0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        item.urlToImage.toString() != "null"
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  item.urlToImage.toString(),
-                  width: 280, // Adjust width as needed
-                  height: 150,
-                  fit: BoxFit.cover,
+        child: Padding(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              item.urlToImage.toString() != "null"
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.network(
+                        item.urlToImage.toString(),
+                        width: 280, // Adjust width as needed
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : const SizedBox(
+                      width: 280,
+                      height: 150,
+                      child: Icon(Icons.image, size: 50),
+                    ),
+              const SizedBox(height: 8.0),
+              Text(
+                item.title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-            : SizedBox(
-                width: 280,
-                height: 150,
-                child: Icon(Icons.image, size: 50),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-        SizedBox(height: 8.0),
-        Text(
-          item.title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        SizedBox(height: 8.0),
-        Text(
-          item.content.toString(),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
+              const SizedBox(height: 8.0),
+              Text(
+                item.content.toString(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
-    ),
-  ),
-),
-
-  );
-}
-
+      ),
+    );
+  }
 }
