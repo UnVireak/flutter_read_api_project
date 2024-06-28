@@ -18,7 +18,11 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
      appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("KN News", style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold
+                ),),
         centerTitle: true,
         actions: [
           IconButton(
